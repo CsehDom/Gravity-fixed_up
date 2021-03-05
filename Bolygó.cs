@@ -22,7 +22,7 @@ namespace Gravitáció
         public static List<Bolygó> lista = new List<Bolygó>();
         private static int listReaderCount = 0;
         private static object listModifyLock = new object();
-        private static object FiddlingWithLocksLock = new object();//fucking hell... This is needed to avoid race condition where ExitListLockModify() may set noListReadersLeft after EnderListLockRead() just reset it (while exllr() was running)... I was hoping that I could do this without an additional lock with Interlocking.Increment..
+        private static object FiddlingWithLocksLock = new object();//damn it... This is needed to avoid race condition where ExitListLockModify() may set noListReadersLeft after EnderListLockRead() just reset it (while exllr() was running)... I was hoping that I could do this without an additional lock with Interlocking.Increment..
         private static ManualResetEvent noListReadersLeft = new ManualResetEvent(true);
         public static void EnterListLockRead()
         {
@@ -64,9 +64,17 @@ namespace Gravitáció
             szín = sz;
             Tömeg = m;
             Méret = (int)Math.Round(Math.Sqrt(Tömeg / 10));
-            lista.Add(this);
             br = new SolidBrush(sz);
             gravitációvektorok = new List<PointD>();
+            try
+            {
+                EnterListLockModify();
+                lista.Add(this);
+            }
+            finally
+            {
+                ExitListLockModify();
+            }
         }
 
         private void GravitációsanKölcsönhat(Bolygó másik)

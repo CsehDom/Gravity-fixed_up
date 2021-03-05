@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Gravitáció
@@ -18,6 +20,7 @@ namespace Gravitáció
         Thread gameLoopThread = null;
         bool paused = true;
         Stopwatch globalStopwatch = new Stopwatch();
+        double renderScale = 1;
 
         PointD toAddVel = new PointD();
         PointD toAddPos = new PointD();
@@ -53,6 +56,7 @@ namespace Gravitáció
 
             loopTypeCB.DataSource = Enum.GetValues(typeof(runType));
             globalStopwatch.Start();
+            MainPB.MouseWheel += MainPB_MouseWheel;
             //TogglePause();
         }
 
@@ -282,8 +286,9 @@ namespace Gravitáció
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            new Bolygó(toAddPos, toAddVel, toAddColor, toAddMass);
+            addBolygó();
         }
+        private void addBolygó() => new Bolygó(toAddPos, toAddVel, toAddColor, toAddMass);
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
@@ -295,7 +300,7 @@ namespace Gravitáció
             if (paused)
             {
                 doIteration(16);
-                (sender as Button).BackColor = SystemColors.Window;
+                (sender as Button).BackColor = SystemColors.Control;
             }
             else
             {
@@ -306,7 +311,7 @@ namespace Gravitáció
 
         private void resetButton_Click(object sender, EventArgs e)
         {
-            try 
+            try
             {
                 Bolygó.EnterListLockModify();
                 Bolygó.lista.Clear();
@@ -350,45 +355,74 @@ namespace Gravitáció
             }
         }
 
-        private void MainPB_MouseClick(object sender, MouseEventArgs e)
+        Point leftDraggingStartedAt;
+        Point rightDraggingStartedAt;
+        private void MainPB_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Left)
             {
+                leftDraggingStartedAt = e.Location;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                rightDraggingStartedAt = e.Location;
                 toAddPos = new PointD(e.X, e.Y);
                 xPosTB.Text = e.X.ToString();
                 yPosTB.Text = e.Y.ToString();
             }
         }
-        Point draggingStartedAt;
-        private void MainPB_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                draggingStartedAt = e.Location;
-            }
-        }
 
         private void MainPB_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            switch (e.Button)
             {
-                /*Point draggingVector = e.Location - (PointD)draggingStartedAt;
-                
-                //hmpf. Awful, but at least a fun thing to do
-                System.Reflection.FieldInfo BPosition = typeof(Bolygó).GetField("Hely", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                lock (Bolygó.ModifyListElementsLock)
-                {
-                    try 
+                case MouseButtons.Left:
                     {
-                        Bolygó.EnterListLockRead();
-                        foreach (Bolygó b in Bolygó.lista) BPosition.SetValue(b, (PointD)BPosition.GetValue(b) + draggingVector);
+                        /*Point draggingVector = e.Location - (PointD)draggingStartedAt;
+
+                        //hmpf. Awful, but at least a fun thing to do
+                        System.Reflection.FieldInfo BPosition = typeof(Bolygó).GetField("Hely", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        lock (Bolygó.ModifyListElementsLock)
+                        {
+                            try 
+                            {
+                                Bolygó.EnterListLockRead();
+                                foreach (Bolygó b in Bolygó.lista) BPosition.SetValue(b, (PointD)BPosition.GetValue(b) + draggingVector);
+                            }
+                            finally
+                            {
+                                Bolygó.ExitListLockModify();
+                            }
+                        }*/
+                        Bolygó.MoveAll(e.Location - (PointD)leftDraggingStartedAt);
+                        break;
                     }
-                    finally
+                case MouseButtons.Right:
                     {
-                        Bolygó.ExitListLockModify();
+                        PointD p = (e.Location - (PointD)rightDraggingStartedAt) / 100;
+                        toAddVel = p;
+                        xSpeedTB.Text = p.X.ToString();
+                        ySpeedTB.Text = p.Y.ToString();
+                        break;
                     }
-                }*/
-                Bolygó.MoveAll(e.Location - (PointD)draggingStartedAt);
+                case MouseButtons.Middle:
+                    {
+                        addBolygó();
+                        break;
+                    }
+            }
+        }
+
+        private void MainPB_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                renderScale *= Math.Pow(1.1, e.Delta);
+            }
+            else
+            {
+                toAddMass += e.Delta;
+                massTB.Text = toAddMass.ToString();
             }
         }
 
@@ -399,3 +433,4 @@ namespace Gravitáció
         }
     }
 }
+
