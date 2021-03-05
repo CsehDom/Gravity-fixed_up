@@ -68,7 +68,6 @@
             this.MainPB.TabIndex = 0;
             this.MainPB.TabStop = false;
             this.MainPB.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            this.MainPB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainPB_MouseClick);
             this.MainPB.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPB_MouseDown);
             this.MainPB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPB_MouseUp);
             // 

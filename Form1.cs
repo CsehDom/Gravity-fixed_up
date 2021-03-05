@@ -189,7 +189,7 @@ namespace Gravitáció
                 Bolygó.EnterListLockRead();
                 foreach (Bolygó bolygó in Bolygó.lista)
                 {
-                    bolygó.Rajz(e);
+                    bolygó.Rajz(e,renderScale,new Point(e.ClipRectangle.Width/2 + e.ClipRectangle.Left, e.ClipRectangle.Height / 2 + e.ClipRectangle.Top));
                 }
             }
             finally
@@ -417,7 +417,7 @@ namespace Gravitáció
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                renderScale *= Math.Pow(1.1, e.Delta);
+                renderScale *= Math.Pow(1.1, e.Delta / SystemInformation.MouseWheelScrollDelta);
             }
             else
             {

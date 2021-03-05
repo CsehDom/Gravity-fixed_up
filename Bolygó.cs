@@ -94,9 +94,11 @@ namespace Gravitáció
             Hely += Sebességvektor * (dt / 16D);
         }
 
-        public void Rajz(PaintEventArgs e)
+        public void Rajz(PaintEventArgs e) => Rajz(e, 1, new Point());
+        public void Rajz(PaintEventArgs e, double scaleFactor, Point scaleMidpoint)
         {
-            e.Graphics.FillEllipse(br, Hely.intX() - (Méret / 2), Hely.intY() - (Méret / 2), Méret, Méret);
+            PointD newPos = (Hely - scaleMidpoint) * scaleFactor + scaleMidpoint;
+            e.Graphics.FillEllipse(br, newPos.intX() - (float)(Méret * scaleFactor / 2), Hely.intY() - (float)(Méret * scaleFactor / 2), (float)(Méret * scaleFactor), (float)(Méret * scaleFactor));
             //e.Graphics.FillEllipse(br, new Rectangle(Hely - new PointD(Méret / 2, Méret / 2), new Size(Méret, Méret)));
         }
 
