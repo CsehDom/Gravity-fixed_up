@@ -98,7 +98,7 @@ namespace Gravitáció
         public void Rajz(PaintEventArgs e, double scaleFactor, Point scaleMidpoint)
         {
             PointD newPos = (Hely - scaleMidpoint) * scaleFactor + scaleMidpoint;
-            e.Graphics.FillEllipse(br, newPos.intX() - (float)(Méret * scaleFactor / 2), Hely.intY() - (float)(Méret * scaleFactor / 2), (float)(Méret * scaleFactor), (float)(Méret * scaleFactor));
+            e.Graphics.FillEllipse(br, newPos.intX() - (float)(Méret * scaleFactor / 2), newPos.intY() - (float)(Méret * scaleFactor / 2), (float)(Méret * scaleFactor), (float)(Méret * scaleFactor));
             //e.Graphics.FillEllipse(br, new Rectangle(Hely - new PointD(Méret / 2, Méret / 2), new Size(Méret, Méret)));
         }
 

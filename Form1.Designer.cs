@@ -30,6 +30,7 @@
         {
             this.MainPB = new System.Windows.Forms.PictureBox();
             this.SettingsPanel = new System.Windows.Forms.Panel();
+            this.centerButton = new System.Windows.Forms.Button();
             this.gameLoopTypeLabel = new System.Windows.Forms.Label();
             this.resetButton = new System.Windows.Forms.Button();
             this.massLabel = new System.Windows.Forms.Label();
@@ -54,7 +55,6 @@
             this.xPosLabel = new System.Windows.Forms.Label();
             this.xPosTB = new System.Windows.Forms.TextBox();
             this.HideSettings = new System.Windows.Forms.Button();
-            this.centerButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MainPB)).BeginInit();
             this.SettingsPanel.SuspendLayout();
             this.SuspendLayout();
@@ -101,6 +101,16 @@
             this.SettingsPanel.Name = "SettingsPanel";
             this.SettingsPanel.Size = new System.Drawing.Size(180, 471);
             this.SettingsPanel.TabIndex = 1;
+            // 
+            // centerButton
+            // 
+            this.centerButton.Location = new System.Drawing.Point(0, 273);
+            this.centerButton.Name = "centerButton";
+            this.centerButton.Size = new System.Drawing.Size(180, 23);
+            this.centerButton.TabIndex = 23;
+            this.centerButton.Text = "center";
+            this.centerButton.UseVisualStyleBackColor = true;
+            this.centerButton.Click += new System.EventHandler(this.centerButton_Click);
             // 
             // gameLoopTypeLabel
             // 
@@ -320,16 +330,6 @@
             this.HideSettings.UseVisualStyleBackColor = true;
             this.HideSettings.Click += new System.EventHandler(this.HideSettings_Click);
             // 
-            // centerButton
-            // 
-            this.centerButton.Location = new System.Drawing.Point(0, 273);
-            this.centerButton.Name = "centerButton";
-            this.centerButton.Size = new System.Drawing.Size(180, 23);
-            this.centerButton.TabIndex = 23;
-            this.centerButton.Text = "center";
-            this.centerButton.UseVisualStyleBackColor = true;
-            this.centerButton.Click += new System.EventHandler(this.centerButton_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -341,6 +341,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form5";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.MainPB)).EndInit();
             this.SettingsPanel.ResumeLayout(false);

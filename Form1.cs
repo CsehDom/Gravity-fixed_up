@@ -27,6 +27,7 @@ namespace Gravitáció
         double toAddMass = 0;
         Color toAddColor = Color.Black;
 
+        PointD midPoint = new PointD();
 
         enum runType
         {
@@ -48,8 +49,8 @@ namespace Gravitáció
             t.Interval = 1;
             t.Tick += Tikk;
 
-            Bolygó pirosbolygó = new Bolygó(new PointD(300, 200), new PointD(0, -1), Color.Red, 20000);
-            Bolygó kékbolygó = new Bolygó(new PointD(500, 300), new PointD(0, 1), Color.Blue, 10000);
+            Bolygó pirosbolygó = new Bolygó(new PointD(300, 200), new PointD(0, 0), Color.Red, 100);
+            Bolygó kékbolygó = new Bolygó(new PointD(500, 200), new PointD(0, 10), Color.Blue, 20000);
 
             MainPB.Size = ClientRectangle.Size;
             Resize += Form1_Resize;
@@ -57,19 +58,58 @@ namespace Gravitáció
             loopTypeCB.DataSource = Enum.GetValues(typeof(runType));
             globalStopwatch.Start();
             MainPB.MouseWheel += MainPB_MouseWheel;
+            setToolTips();
+            midPoint.X = MainPB.Width / 2;
+            midPoint.Y = MainPB.Height / 2;
             //TogglePause();
+        }
+
+        private void setToolTips()
+        {
+
+            ToolTip to = new ToolTip();
+            to.SetToolTip(xPosTB, "You can also set this by right clicking somewhere");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
+            to = new ToolTip();
+            to.SetToolTip(yPosTB, "You can also set this by right clicking somewhere");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
+            to = new ToolTip();
+            to.SetToolTip(xSpeedTB, "You can also set this by dragging with rmb on the form");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
+            to = new ToolTip();
+            to.SetToolTip(ySpeedTB, "You can also set this by by dragging with rmb on the form");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
+            to = new ToolTip();
+            to.SetToolTip(massTB, "You can also set this with mouse roller");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
+            to.SetToolTip(addButton, "You can also add by clicking with mmb");
+            to.Active = true;
+            to.InitialDelay = 100;
+            to.ShowAlways = true;
         }
 
         private void Form1_Resize(object sender, EventArgs e)
         {
             MainPB.Size = ClientRectangle.Size;
+            midPoint.X = MainPB.Width / 2;
+            midPoint.Y = MainPB.Height / 2;
         }
 
         long lastRenderBegunAt = 0;
         private void Render()
         {
             long thisRenderBegunAt = globalStopwatch.ElapsedTicks;
-            Text = ((thisRenderBegunAt - lastRenderBegunAt) * 1000D / Stopwatch.Frequency).ToString();
+            Text = ((thisRenderBegunAt - lastRenderBegunAt) * 1000D / Stopwatch.Frequency).ToString() + ", renderScale: " + renderScale.ToString();
             lastRenderBegunAt = thisRenderBegunAt;
             MainPB.Invalidate();
         }
@@ -89,12 +129,13 @@ namespace Gravitáció
                 deltaTime = thisForm1.deltaTime;
                 try
                 {
-                    IAsyncResult renderTask = thisForm1.BeginInvoke((MethodInvoker)(() => thisForm1.Render()));//mildly dangerous (e.g. foreach and linq), but in theory fine as planets don't get removed
+                    //IAsyncResult renderTask = thisForm1.BeginInvoke((MethodInvoker)(() => thisForm1.Render()));//mildly dangerous (e.g. foreach and linq), but in theory fine as planets don't get removed
+                    thisForm1.Invoke( (MethodInvoker)(() => thisForm1.Render()));
                     long thisFrameAt = sw.ElapsedTicks;
                     int dt = deltaTime > 0 ? deltaTime : (targetFrameTime == 0 ? (int)Math.Round((thisFrameAt - lastFrameAt) / (Stopwatch.Frequency / 1000D)) : targetFrameTime);
                     lastFrameAt = thisFrameAt;
                     doIteration(dt);
-                    thisForm1.EndInvoke(renderTask);
+                    //thisForm1.EndInvoke(renderTask);
                     ++frameCount;
                     while (sw.ElapsedTicks * 1000 <= targetFrameTime * frameCount * Stopwatch.Frequency) ;
                 }
@@ -186,10 +227,13 @@ namespace Gravitáció
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             try
             {
+                /*e.Graphics.FillEllipse(br, (float)toAddPos.X - 20, (float)toAddPos.Y - 20, 40, 40);
+                e.Graphics.FillEllipse(new SolidBrush(Color.Blue), (float)midPoint.X - 5, (float)midPoint.Y - 5, 10, 10);
+                e.Graphics.FillEllipse(new SolidBrush(Color.Red), (float)(((toAddPos - midPoint) * renderScale) + midPoint).X - 20, (float)(((toAddPos - midPoint) * renderScale) + midPoint).Y - 20, 40, 40);*/
                 Bolygó.EnterListLockRead();
                 foreach (Bolygó bolygó in Bolygó.lista)
                 {
-                    bolygó.Rajz(e,renderScale,new Point(e.ClipRectangle.Width/2 + e.ClipRectangle.Left, e.ClipRectangle.Height / 2 + e.ClipRectangle.Top));
+                    bolygó.Rajz(e,renderScale,midPoint);
                 }
             }
             finally
@@ -366,9 +410,9 @@ namespace Gravitáció
             else if (e.Button == MouseButtons.Right)
             {
                 rightDraggingStartedAt = e.Location;
-                toAddPos = new PointD(e.X, e.Y);
-                xPosTB.Text = e.X.ToString();
-                yPosTB.Text = e.Y.ToString();
+                toAddPos = (new PointD(e.X, e.Y) - midPoint) / renderScale + midPoint;
+                xPosTB.Text = toAddPos.X.ToString();
+                yPosTB.Text = toAddPos.Y.ToString();
             }
         }
 
@@ -394,12 +438,12 @@ namespace Gravitáció
                                 Bolygó.ExitListLockModify();
                             }
                         }*/
-                        Bolygó.MoveAll(e.Location - (PointD)leftDraggingStartedAt);
+                        Bolygó.MoveAll((e.Location - (PointD)leftDraggingStartedAt) / renderScale);
                         break;
                     }
                 case MouseButtons.Right:
                     {
-                        PointD p = (e.Location - (PointD)rightDraggingStartedAt) / 100;
+                        PointD p = (e.Location - (PointD)rightDraggingStartedAt) / (100 * renderScale);
                         toAddVel = p;
                         xSpeedTB.Text = p.X.ToString();
                         ySpeedTB.Text = p.Y.ToString();
@@ -429,7 +473,12 @@ namespace Gravitáció
         private void centerButton_Click(object sender, EventArgs e)
         {
             Bolygó.RemoveSumMomentum();
-            Bolygó.MoveAll((Bolygó.GetCoM() * -1) + new PointD(Width / 2, Height / 2));
+            Bolygó.MoveAll((Bolygó.GetCoM() * -1) + midPoint);
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            continueThread = false;
         }
     }
 }
