@@ -129,7 +129,7 @@ namespace Gravitáció
                 deltaTime = thisForm1.deltaTime;
                 try
                 {
-                    //IAsyncResult renderTask = thisForm1.BeginInvoke((MethodInvoker)(() => thisForm1.Render()));//mildly dangerous (e.g. foreach and linq), but in theory fine as planets don't get removed
+                    //IAsyncResult renderTask = thisForm1.BeginInvoke((MethodInvoker)(() => thisForm1.Render()));//mildly dangerous (e.g. foreach and linq), but in theory fine as planets don't get removed - REMOVED because: no noticable impact, but breaks some user interaction with form /why? idk/
                     thisForm1.Invoke( (MethodInvoker)(() => thisForm1.Render()));
                     long thisFrameAt = sw.ElapsedTicks;
                     int dt = deltaTime > 0 ? deltaTime : (targetFrameTime == 0 ? (int)Math.Round((thisFrameAt - lastFrameAt) / (Stopwatch.Frequency / 1000D)) : targetFrameTime);
@@ -479,6 +479,11 @@ namespace Gravitáció
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             continueThread = false;
+        }
+
+        private void OpenPlanetHandlerButton_Click(object sender, EventArgs e)
+        {
+            PlanetHandler.OpenOnNewThread();
         }
     }
 }

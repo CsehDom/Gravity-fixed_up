@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,7 +23,7 @@ namespace Gravitáció
         public static List<Bolygó> lista = new List<Bolygó>();
         private static int listReaderCount = 0;
         private static object listModifyLock = new object();
-        private static object FiddlingWithLocksLock = new object();//damn it... This is needed to avoid race condition where ExitListLockModify() may set noListReadersLeft after EnderListLockRead() just reset it (while exllr() was running)... I was hoping that I could do this without an additional lock with Interlocking.Increment..
+        private static object FiddlingWithLocksLock = new object();//damn it... This is needed to avoid race condition where ExitListLockModify() may set noListReadersLeft after EnterListLockRead() just reset it (while exllr() was running)... I was hoping that I could do this without an additional lock with Interlocking.Increment..
         private static ManualResetEvent noListReadersLeft = new ManualResetEvent(true);
         public static void EnterListLockRead()
         {
@@ -215,6 +216,10 @@ namespace Gravitáció
                     ExitListLockRead();
                 }
             }
+        }
+        public override string ToString()
+        {
+            return new StringBuilder().Append("Position: {").Append(Hely).Append("}, Velocity: {").Append(Sebességvektor).Append("}, Mass: ").Append(Tömeg).Append(", Color: {").Append(szín).Append("}").ToString();
         }
     }
 }

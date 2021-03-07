@@ -38,5 +38,10 @@ namespace Gravitáció
 
 		public double DistanceFrom(PointD P) { return (this - P).Hossz(); }
 		public double DistanceFromNégyzet(PointD P) { return (this - P).HosszNégyzet(); }
-	}
+
+        public override string ToString()
+        {
+			return new StringBuilder().Append("X: ").Append(X).Append(", Y: ").Append(Y).ToString();
+        }
+    }
 }

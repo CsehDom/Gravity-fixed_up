@@ -55,6 +55,7 @@
             this.xPosLabel = new System.Windows.Forms.Label();
             this.xPosTB = new System.Windows.Forms.TextBox();
             this.HideSettings = new System.Windows.Forms.Button();
+            this.OpenPlanetHandlerButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MainPB)).BeginInit();
             this.SettingsPanel.SuspendLayout();
             this.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // SettingsPanel
             // 
+            this.SettingsPanel.Controls.Add(this.OpenPlanetHandlerButton);
             this.SettingsPanel.Controls.Add(this.centerButton);
             this.SettingsPanel.Controls.Add(this.gameLoopTypeLabel);
             this.SettingsPanel.Controls.Add(this.resetButton);
@@ -99,7 +101,7 @@
             this.SettingsPanel.Controls.Add(this.xPosTB);
             this.SettingsPanel.Location = new System.Drawing.Point(1592, 42);
             this.SettingsPanel.Name = "SettingsPanel";
-            this.SettingsPanel.Size = new System.Drawing.Size(180, 471);
+            this.SettingsPanel.Size = new System.Drawing.Size(180, 524);
             this.SettingsPanel.TabIndex = 1;
             // 
             // centerButton
@@ -330,6 +332,16 @@
             this.HideSettings.UseVisualStyleBackColor = true;
             this.HideSettings.Click += new System.EventHandler(this.HideSettings_Click);
             // 
+            // OpenPlanetHandlerButton
+            // 
+            this.OpenPlanetHandlerButton.Location = new System.Drawing.Point(0, 477);
+            this.OpenPlanetHandlerButton.Name = "OpenPlanetHandlerButton";
+            this.OpenPlanetHandlerButton.Size = new System.Drawing.Size(180, 23);
+            this.OpenPlanetHandlerButton.TabIndex = 24;
+            this.OpenPlanetHandlerButton.Text = "open console";
+            this.OpenPlanetHandlerButton.UseVisualStyleBackColor = true;
+            this.OpenPlanetHandlerButton.Click += new System.EventHandler(this.OpenPlanetHandlerButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -379,6 +391,7 @@
         private System.Windows.Forms.Label gameLoopTypeLabel;
         private System.Windows.Forms.Button resetButton;
         private System.Windows.Forms.Button centerButton;
+        private System.Windows.Forms.Button OpenPlanetHandlerButton;
     }
 }
 
